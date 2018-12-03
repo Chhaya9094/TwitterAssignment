@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <script src="jquery.js"></script>
+    <script src="jquery.timeago.js"></script>
+    <script src="data_generator.js"></script>
+  </head>
+
+  <body>
+    <header class="header">
+      <h1>Twittler <img src="img/leaf.png" class="icon" /></h1>
+    </header>
+
+    <div class="container">
+      <div class="sidebar">
+        <div class="user">
+          <img src="img/user.jpg" class="user-pic" />
+          <h3>Emily Coco<br/>@emilymcoco</h3>
+          <span class="user-tweets">Tweets</span>
+          <span class="following">Following: 4</span>
+          <span>Followers: 0</span>
+        </div>
+        <div class="controls">
+          <h3>Controls</h3>
+          <form method="post" action="#">
+            <label for="tweet-form">Tweet:</label>
+            <input type="text-area" class="tweet-form" name="tweet-form">
+            <button class="tweet-button">Submit Tweet</button>
+          </form>
+          <br/>
+          <label for="users-list"><h3>Following:</h3></label>
+          <ul class="users-list">
+            <li data-user="sharksforcheap">sharksforcheap</li>
+            <li data-user="shawndrost">shawndrost</li>
+            <li data-user="mracus">mracus</li>
+            <li data-user="douglascalhoun">douglascalhoun</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tweets">
+        <h2>Tweets</h2>
+        <button class="back-home" type="button">See All Tweets</button>
+        <button class="new-tweets" type="button">See New Tweets</button>
+        <div class="tweet-container">
+        </div>
+      </div>
+    </div>
+
+  <script>
+    $(document).ready(function () {
+        
+      var getTweets = function (oneUser) {
+
+        var userTweetsIndex;
+        if(oneUser === 'home') {
+          $('.back-home').hide();
+          $('.tweets > h2').text('Tweets');
+          userTweetsIndex = streams.home;
+        } else {
+          $('.back-home').show();
+          $('.tweets > h2').text('Tweets from @' + oneUser);
+          userTweetsIndex = streams.users[oneUser];
+        } 
+        
+        $('.tweet-container').empty();
+          
+          var index = userTweetsIndex.length - 1;
+          while (index >= 0) {
+            var tweet = userTweetsIndex[index];
+            var $tweet = $('<div class="individual-tweet"><div class="handle"></div><div class="time"></div><p class="text"></p></div>');
+              $tweet.data('user', tweet.user);
+              $tweet.find('.handle').text('@' + tweet.user);
+              $tweet.find('.time').text(jQuery.timeago(tweet.created_at));
+              $tweet.find('.text').text(tweet.message);
+              $tweet.appendTo($('.tweet-container'));
+            index -= 1;
+          }
+      }
+                  
+                  
+      var thisUser = 'home';
+      getTweets(thisUser);
+
+      $(".new-tweets").on('click', function () {
+        getTweets(thisUser);
+      });
+
+      $(".users-list > li").on('click', function () {
+        thisUser = $(this).data('user');
+        getTweets(thisUser);
+      });
+
+      $(".tweet-container").on('click',  ".individual-tweet", function () {
+        thisUser = $(this).data('user');
+        getTweets(thisUser);
+      });
+
+      $(".back-home").on('click', function () {
+        thisUser = 'home';
+        getTweets(thisUser);
+      });
+
+
+      $(".tweet-button").on('click', function (event) {
+        event.preventDefault();
+        writeTweet('hi');
+      });
+
+    });
+  </script>
+  </body>
+</html>
